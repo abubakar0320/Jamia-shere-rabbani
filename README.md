@@ -1,4 +1,4 @@
-# Wafaqul Madaris Al Arabia Pakistan Portal
+# Jamia Shere Rabbani Mananwala,  Pakistan Portal
 
 ## Local Development Setup
 
