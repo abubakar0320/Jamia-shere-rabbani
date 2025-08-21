@@ -1,0 +1,12 @@
+Loading composer repositories with package information
+Updating dependencies
+Nothing to modify in lock file
+Writing lock file
+Installing dependencies from lock file (including require-dev)
+Nothing to install, update or remove
+Generating optimized autoload files
+Warning: Ambiguous class resolution, "Supabase\Util\EnvSetup" was found in both "C:/Users/Abu-Bakar/Jamia-shere-rabbani/vendor/supabase/supabase-php/src\Util\EnvSetup.php" and "C:/Users/Abu-Bakar/Jamia-shere-rabbani/vendor/supabase/gotrue-php/src\Util\EnvSetup.php", the first will be used.
+To resolve ambiguity in classes not under your control you can ignore them by path using exclude-from-classmap
+24 packages you are using are looking for funding.
+Use the `composer fund` command to find out more!
+No security vulnerability advisories found.
