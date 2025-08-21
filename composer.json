@@ -5,7 +5,7 @@
     "require": {
         "php": "^8.0",
         "vlucas/phpdotenv": "^5.5",
-        "supabase/supabase-php": "^2.0"
+        "supabase/supabase-php": "^0.0.3"
     },
    
     "autoload": {
