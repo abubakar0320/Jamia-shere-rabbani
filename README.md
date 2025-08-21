@@ -1,42 +1,38 @@
-# Jamia Shere Rabbani Mananwala,  Pakistan Portal
+# Jamia Shere Rabbani
 
-## Local Development Setup
+A dynamic portal for Jamia Shere Rabbani, Mananwala, Pakistan.  
+Built with PHP, Composer, and lightweight front-end tools.
 
-1. Prerequisites:
-   - PHP 8.0 or higher
-   - Composer
-   - XAMPP/WAMP/MAMP
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Local Development](#local-development)
+- [Project Structure](#project-structure)
+- [Environment Setup](#environment-setup)
+- [Screenshots](#screenshots)
+- [Future Improvements](#future-improvements)
+- [License](#license)
+- [Contact](#contact)
 
-2. Installation:
-   ```bash
-   # Install dependencies
-   composer install
+## Overview
+Web portal for pages like admissions, login, results, gallery, contact, and downloads.
 
-   # Copy environment file
-   cp .env.example .env
-   ```
+## Features
+- Admissions forms
+- Authentication (login/register/logout)
+- Gallery page
+- Contact page and downloads
 
-3. Configure your environment:
-   - Update `.env` with your Supabase credentials
-   - Configure your local PHP server
+## Tech Stack
+- Back-end: PHP 8+, Composer
+- Front-end: HTML, Tailwind CSS, JavaScript, Vite
+- Config: `.env` for secrets
 
-4. Start the server:
-   - Using XAMPP: Place the project in htdocs folder
-   - Using PHP built-in server: `php -S localhost:8000`
-
-5. Access the site:
-   - Open http://localhost:8000 in your browser
-
-## Project Structure
-
-```
-├── config/             # Configuration files
-├── includes/           # PHP includes
-├── public/            # Public assets
-├── src/               # Source files
-├── supabase/          # Supabase migrations
-├── vendor/            # Composer dependencies
-├── .env               # Environment variables
-├── .htaccess          # Apache configuration
-└── composer.json      # Composer configuration
-```
+## Local Development
+```bash
+git clone https://github.com/abubakar0320/Jamia-shere-rabbani.git
+cd Jamia-shere-rabbani
+composer install
+cp .env.example .env   # then edit .env values
+php -S localhost:8000
