@@ -1,0 +1,112 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    # 👇 Secrets available to all steps in this job
+    env:
+      APP_KEY: ${{ secrets.APP_KEY }}
+      DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, intl, pdo_mysql
+          coverage: none
+
+      - name: Install Composer deps
+        run: composer install --no-progress --no-interaction --prefer-dist
+
+      - name: Copy env & inject secrets
+        run: |
+          cp .env.example .env || true
+          # Overwrite with secrets to ensure correct values
+          sed -i 's/^APP_KEY=.*/APP_KEY='${APP_KEY//\//\\/}'/' .env || echo "APP_KEY=${APP_KEY}" >> .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION='${DB_CONNECTION}'/' .env || echo "DB_CONNECTION=${DB_CONNECTION}" >> .env
+          sed -i 's/^DB_HOST=.*/DB_HOST='${DB_HOST}'/' .env || echo "DB_HOST=${DB_HOST}" >> .env
+          sed -i 's/^DB_PORT=.*/DB_PORT='${DB_PORT}'/' .env || echo "DB_PORT=${DB_PORT}" >> .env
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE='${DB_DATABASE}'/' .env || echo "DB_DATABASE=${DB_DATABASE}" >> .env
+          sed -i 's/^DB_USERNAME=.*/DB_USERNAME='${DB_USERNAME}'/' .env || echo "DB_USERNAME=${DB_USERNAME}" >> .env
+          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD='${DB_PASSWORD}'/' .env || echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
+              echo "MySQL is up!"; break
+            fi
+            echo "Waiting for MySQL... ($i/30)"; sleep 2
+          done
+
+      - name: Generate app key if empty
+        run: |
+          if ! grep -q "^APP_KEY=base64:" .env || [ -z "$APP_KEY" ]; then
+            php artisan key:generate
+          fi
+
+      - name: Run migrations (if any)
+        run: |
+          if ls database/migrations/*.php >/dev/null 2>&1; then
+            php artisan migrate --force
+          else
+            echo "No migrations found, skipping."
+          fi
+
+      - name: Run tests (if present)
+        run: |
+          if [ -f vendor/bin/phpunit ] || [ -d tests ]; then
+            php artisan test || vendor/bin/phpunit
+          else
+            echo "No tests found, skipping."
+          fi
+
+      # Optional Node build (only if you have package.json)
+      - name: Setup Node
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Node deps
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      - name: Build assets
+        if: hashFiles('package.json') != ''
+        run: |
+          if npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "No build script, skipping."
+          fi
