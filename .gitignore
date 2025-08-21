@@ -1,24 +1,27 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Environment variables
+.env
+.env.local
+.env.*.local
 
-node_modules
-dist
-dist-ssr
-*.local
+# Composer dependencies
+/vendor/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Node.js dependencies (if used in front-end)
+/node_modules/
+
+# Build and cache files
+/dist/
+/build/
+/.cache/
+/npm-debug.log
+/yarn-error.log
+
+# OS/system files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
