@@ -6,7 +6,6 @@
 [![TailwindCSS Version](https://img.shields.io/badge/Tailwind-4.1.12-blue)](https://tailwindcss.com/)
 [![Vite Version](https://img.shields.io/badge/Vite-7.1.3-purple)](https://vitejs.dev/)
 [![CI Workflow](https://github.com/abubakar0320/Jamia-shere-rabbani/actions/workflows/ci.yml/badge.svg)](https://github.com/abubakar0320/Jamia-shere-rabbani/actions)
-[![CodeQL](https://github.com/abubakar0320/Jamia-shere-rabbani/actions/workflows/codeql-analysis.yml/badge.svg)](https://securitylab.github.com/tools/codeql)
 
 ---
 
