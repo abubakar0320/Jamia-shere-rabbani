@@ -1,16 +1,20 @@
-name: Laravel CI
+name: Laravel CI Workflow
+
+# Minimal permissions for all jobs
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   push:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "dev" ]
+    branches: [ "main" ]
 
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
 
-    # 👇 Secrets available to all steps in this job
     env:
       APP_KEY: ${{ secrets.APP_KEY }}
       DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
@@ -51,7 +55,6 @@ jobs:
       - name: Copy env & inject secrets
         run: |
           cp .env.example .env || true
-          # Overwrite with secrets to ensure correct values
           sed -i 's/^APP_KEY=.*/APP_KEY='${APP_KEY//\//\\/}'/' .env || echo "APP_KEY=${APP_KEY}" >> .env
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION='${DB_CONNECTION}'/' .env || echo "DB_CONNECTION=${DB_CONNECTION}" >> .env
           sed -i 's/^DB_HOST=.*/DB_HOST='${DB_HOST}'/' .env || echo "DB_HOST=${DB_HOST}" >> .env
@@ -91,7 +94,6 @@ jobs:
             echo "No tests found, skipping."
           fi
 
-      # Optional Node build (only if you have package.json)
       - name: Setup Node
         if: hashFiles('package.json') != ''
         uses: actions/setup-node@v4
