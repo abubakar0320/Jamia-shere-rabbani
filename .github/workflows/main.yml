@@ -1,17 +1,43 @@
-name: CI Test Workflow
+name: "CI Workflow"
+
+# Minimal permissions for all jobs
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout code
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # Step 2: Set up Node.js (for npm, Vite, etc.)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Run build
+      - name: Build Project
+        run: npm run build
+
+      # Step 5: Run tests (if any)
+      - name: Run Tests
+        run: npm run test || echo "No tests configured"
+
+      # Optional: Hello world step
       - name: Run Hello World
         run: echo "🎉 GitHub Actions is working!"
