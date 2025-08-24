@@ -25,3 +25,5 @@ Thumbs.db
 .idea/
 *.sublime-workspace
 *.sublime-project
+
+# Ignore environment files
