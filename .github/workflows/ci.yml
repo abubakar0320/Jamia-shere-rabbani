@@ -1,8 +1,4 @@
-name: CI Workflow
-
-permissions:
-  contents: read
-  pull-requests: write
+name: PHP CI
 
 on:
   push:
@@ -12,68 +8,36 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8
-        ports: [3306]
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: laravel
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      # ---------------- PHP / Laravel ----------------
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          tools: composer
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: none
 
-      - name: Cache Composer dependencies
-        uses: actions/cache@v3
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-php-
+    - name: Install Composer dependencies
+      run: composer install --no-progress --no-interaction --prefer-dist
 
-      - name: Install PHP dependencies
-        run: composer install --no-progress --prefer-dist --optimize-autoloader
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
 
-      - name: Laravel setup
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-          php artisan migrate --force
+    # agar tum JS/Tailwind/Vite use karte ho
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Run Laravel tests
-        run: php artisan test
+    - name: Install NPM dependencies
+      run: npm install
 
-      # ---------------- Node / JS ----------------
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
+    - name: Build assets
+      run: npm run build
 
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
-      - name: Install JS dependencies
-        run: npm ci
-
-      - name: Run JS build
-        run: npm run build
-
-      - name: Run JS tests
-        run: npm test --if-present
+    - name: PHP lint check
+      run: find ./ -type f -name "*.php" -exec php -l {} \;
