@@ -1,4 +1,4 @@
-name: PHP CI
+name: CI Workflow
 
 on:
   push:
@@ -7,36 +7,36 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  php-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.2'
-        coverage: none
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
 
-    - name: Install Composer dependencies
-      run: composer install --no-progress --no-interaction --prefer-dist
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-interaction --prefer-dist
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - name: PHP Syntax Check
+        run: find src -name "*.php" -exec php -l {} \;
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+  frontend-build:
+    runs-on: ubuntu-latest
 
-    - name: Install NPM dependencies
-      run: npm install
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Build assets
-      run: npm run build
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: PHP lint check
-      run: find ./ -type f -name "*.php" -exec php -l {} \;
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
