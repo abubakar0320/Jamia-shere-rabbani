@@ -27,7 +27,6 @@ jobs:
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
-    # agar tum JS/Tailwind/Vite use karte ho
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
